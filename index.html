@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>算法学习之旅 | Algorithm Journey</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        /* 头部样式 */
+        .header {
+            text-align: center;
+            color: white;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        /* 搜索框 */
+        .search-box {
+            background: white;
+            border-radius: 50px;
+            padding: 15px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .search-icon {
+            font-size: 1.5em;
+            color: #667eea;
+        }
+        
+        .search-box input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 1.1em;
+            color: #333;
+        }
+        
+        .search-box input::placeholder {
+            color: #999;
+        }
+        
+        /* 主题卡片 */
+        .theme-card {
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .theme-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+        
+        .theme-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+        
+        .theme-header:hover {
+            background: linear-gradient(135deg, #5a6fd6 0%, #6a4190 100%);
+        }
+        
+        .theme-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .theme-icon {
+            font-size: 1.8em;
+        }
+        
+        .theme-name {
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+        
+        .theme-count {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        
+        .theme-toggle {
+            font-size: 1.5em;
+            transition: transform 0.3s;
+        }
+        
+        .theme-card.collapsed .theme-toggle {
+            transform: rotate(-90deg);
+        }
+        
+        /* 笔记列表 */
+        .note-list {
+            padding: 0;
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.5s ease;
+        }
+        
+        .theme-card.collapsed .note-list {
+            max-height: 0;
+            padding: 0;
+        }
+        
+        .note-item {
+            display: flex;
+            align-items: center;
+            padding: 18px 25px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.2s;
+            text-decoration: none;
+            color: #333;
+        }
+        
+        .note-item:last-child {
+            border-bottom: none;
+        }
+        
+        .note-item:hover {
+            background: #f8f9ff;
+        }
+        
+        .note-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        
+        .note-content {
+            flex: 1;
+        }
+        
+        .note-title {
+            font-size: 1.1em;
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .note-desc {
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+        
+        .note-arrow {
+            color: #667eea;
+            font-size: 1.2em;
+            opacity: 0;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+        
+        .note-item:hover .note-arrow {
+            opacity: 1;
+            transform: translateX(5px);
+        }
+        
+        /* 进度标签 */
+        .progress-badge {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            margin-left: 15px;
+        }
+        
+        .progress-badge.new {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 40px 20px;
+            margin-top: 40px;
+            opacity: 0.8;
+        }
+        
+        .footer p {
+            margin: 10px 0;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .stats {
+                gap: 20px;
+            }
+            
+            .stat-number {
+                font-size: 2em;
+            }
+            
+            .theme-header {
+                padding: 15px 20px;
+            }
+            
+            .theme-name {
+                font-size: 1.2em;
+            }
+            
+            .note-item {
+                padding: 15px 20px;
+            }
+            
+            .note-number {
+                width: 40px;
+                height: 40px;
+                font-size: 0.8em;
+            }
+        }
+        
+        /* 动画 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .theme-card {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .theme-card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+        
+        .theme-card:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+        
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .empty-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🚀 算法学习之旅</h1>
+            <p>从零开始，系统掌握算法思维</p>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="topicCount">4</div>
+                    <div class="stat-label">学习主题</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="noteCount">5</div>
+                    <div class="stat-label">笔记数量</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="progressCount">0%</div>
+                    <div class="stat-label">学习进度</div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="搜索笔记标题或关键词..." oninput="filterNotes()">
+        </div>
+        
+        <!-- 主题：数学归纳法 -->
+        <div class="theme-card" data-theme="数学归纳法">
+            <div class="theme-header" onclick="toggleTheme(this)">
+                <div class="theme-title">
+                    <span class="theme-icon">📐</span>
+                    <span class="theme-name">数学归纳法</span>
+                    <span class="theme-count">3 篇笔记</span>
+                </div>
+                <span class="theme-toggle">▼</span>
+            </div>
+            
+            <div class="note-list">
+                <a href="pages/0001-数学归纳法-原理与皮亚诺公理.html" class="note-item" data-title="数学归纳法原理与皮亚诺公理" data-keywords="归纳法,皮亚诺公理,自然数,递归">
+                    <div class="note-number">0001</div>
+                    <div class="note-content">
+                        <div class="note-title">数学归纳法原理与皮亚诺公理</div>
+                        <div class="note-desc">探讨数学归纳法的本质、皮亚诺公理体系与自然数的定义</div>
+                    </div>
+                    <span class="progress-badge new">最新</span>
+                    <span class="note-arrow">→</span>
+                </a>
+                
+                <a href="pages/0002-数学归纳法-错误证明分析.html" class="note-item" data-title="错误证明分析" data-keywords="循环论证,假证明,归纳假设,递推">
+                    <div class="note-number">0002</div>
+                    <div class="note-content">
+                        <div class="note-title">错误证明分析</div>
+                        <div class="note-desc">剖析数学归纳法中的典型错误——循环论证，理解递推的本质</div>
+                    </div>
+                    <span class="progress-badge new">最新</span>
+                    <span class="note-arrow">→</span>
+                </a>
+                
+                <a href="pages/0003-数学归纳法-错误证明分析-裂项相消法.html" class="note-item" data-title="错误证明分析与裂项相消法" data-keywords="裂项相消,基础情形,空和,telescoping">
+                    <div class="note-number">0003</div>
+                    <div class="note-content">
+                        <div class="note-title">错误证明分析与裂项相消法</div>
+                        <div class="note-desc">找出归纳法证明中基础情形的错误，用裂项相消法推导正确公式</div>
+                    </div>
+                    <span class="progress-badge new">最新</span>
+                    <span class="note-arrow">→</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 主题：竞赛数学 -->
+        <div class="theme-card" data-theme="竞赛数学">
+            <div class="theme-header" onclick="toggleTheme(this)">
+                <div class="theme-title">
+                    <span class="theme-icon">🏆</span>
+                    <span class="theme-name">竞赛数学</span>
+                    <span class="theme-count">1 篇笔记</span>
+                </div>
+                <span class="theme-toggle">▼</span>
+            </div>
+            
+            <div class="note-list">
+                <a href="pages/0004-竞赛数学-索菲热尔曼恒等式与裂项求和的历史.html" class="note-item" data-title="索菲·热尔曼恒等式与裂项求和的历史" data-keywords="索菲·热尔曼,裂项求和,望远镜求和,竞赛数学,IMO,交错级数">
+                    <div class="note-number">0004</div>
+                    <div class="note-content">
+                        <div class="note-title">索菲·热尔曼恒等式与裂项求和的历史</div>
+                        <div class="note-desc">从18世纪巴黎的烛光到现代奥林匹克，一道竞赛题背后的数学史诗（约1万字）</div>
+                    </div>
+                    <span class="progress-badge new">最新</span>
+                    <span class="note-arrow">→</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 主题：算法思想 -->
+        <div class="theme-card collapsed" data-theme="算法思想">
+            <div class="theme-header" onclick="toggleTheme(this)">
+                <div class="theme-title">
+                    <span class="theme-icon">💡</span>
+                    <span class="theme-name">算法思想</span>
+                    <span class="theme-count">1 篇笔记</span>
+                </div>
+                <span class="theme-toggle">▼</span>
+            </div>
+            
+            <div class="note-list">
+                <a href="pages/0005-算法思想-符号变换与计算思维.html" class="note-item" data-title="符号变换与计算思维" data-keywords="符号化,计算思维,数据建模,艾达·洛芙莱斯,算法本质">
+                    <div class="note-number">0005</div>
+                    <div class="note-content">
+                        <div class="note-title">符号变换与计算思维</div>
+                        <div class="note-desc">从艾达·洛芙莱斯的名言看算法的本质，理解符号化思维与计算思维的关系</div>
+                    </div>
+                    <span class="progress-badge new">最新</span>
+                    <span class="note-arrow">→</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 主题：递归与分治（待添加） -->
+        <div class="theme-card collapsed" data-theme="递归与分治">
+            <div class="theme-header" onclick="toggleTheme(this)">
+                <div class="theme-title">
+                    <span class="theme-icon">🔄</span>
+                    <span class="theme-name">递归与分治</span>
+                    <span class="theme-count">待添加</span>
+                </div>
+                <span class="theme-toggle">▼</span>
+            </div>
+            
+            <div class="note-list">
+                <div class="empty-state">
+                    <div class="empty-icon">📝</div>
+                    <p>该主题下的笔记正在整理中...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 主题：动态规划（待添加） -->
+        <div class="theme-card collapsed" data-theme="动态规划">
+            <div class="theme-header" onclick="toggleTheme(this)">
+                <div class="theme-title">
+                    <span class="theme-icon">📊</span>
+                    <span class="theme-name">动态规划</span>
+                    <span class="theme-count">待添加</span>
+                </div>
+                <span class="theme-toggle">▼</span>
+            </div>
+            
+            <div class="note-list">
+                <div class="empty-state">
+                    <div class="empty-icon">📝</div>
+                    <p>该主题下的笔记正在整理中...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 主题：图论（待添加） -->
+        <div class="theme-card collapsed" data-theme="图论">
+            <div class="theme-header" onclick="toggleTheme(this)">
+                <div class="theme-title">
+                    <span class="theme-icon">🕸️</span>
+                    <span class="theme-name">图论</span>
+                    <span class="theme-count">待添加</span>
+                </div>
+                <span class="theme-toggle">▼</span>
+            </div>
+            
+            <div class="note-list">
+                <div class="empty-state">
+                    <div class="empty-icon">📝</div>
+                    <p>该主题下的笔记正在整理中...</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="footer">
+            <p>📚 持续更新中 · 每次学习都是一次成长</p>
+            <p>最后更新：2026-05-26</p>
+        </footer>
+    </div>
+    
+    <script>
+        // 展开/折叠主题
+        function toggleTheme(header) {
+            const card = header.parentElement;
+            card.classList.toggle('collapsed');
+            
+            // 保存状态到 localStorage
+            const theme = card.dataset.theme;
+            const isCollapsed = card.classList.contains('collapsed');
+            localStorage.setItem('theme_' + theme, isCollapsed);
+        }
+        
+        // 恢复主题折叠状态
+        function restoreThemeState() {
+            document.querySelectorAll('.theme-card').forEach(card => {
+                const theme = card.dataset.theme;
+                const isCollapsed = localStorage.getItem('theme_' + theme);
+                if (isCollapsed === 'true') {
+                    card.classList.add('collapsed');
+                }
+            });
+        }
+        
+        // 搜索过滤
+        function filterNotes() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            
+            document.querySelectorAll('.note-item').forEach(item => {
+                const title = item.dataset.title.toLowerCase();
+                const keywords = item.dataset.keywords.toLowerCase();
+                const desc = item.querySelector('.note-desc').textContent.toLowerCase();
+                
+                const isMatch = title.includes(keyword) || 
+                               keywords.includes(keyword) || 
+                               desc.includes(keyword);
+                
+                item.style.display = isMatch ? 'flex' : 'none';
+            });
+            
+            // 更新主题卡片的"是否有可见笔记"状态
+            document.querySelectorAll('.theme-card').forEach(card => {
+                const visibleNotes = card.querySelectorAll('.note-item[style="display: flex;"], .note-item:not([style])');
+                const hasVisible = Array.from(card.querySelectorAll('.note-item')).some(item => 
+                    item.style.display !== 'none'
+                );
+                
+                // 如果有搜索关键词且该主题下没有匹配项，隐藏整个主题卡片
+                if (keyword && !hasVisible) {
+                    card.style.display = 'none';
+                } else {
+                    card.style.display = 'block';
+                }
+            });
+        }
+        
+        // 记录访问进度
+        function recordProgress(url) {
+            const visited = JSON.parse(localStorage.getItem('visited_notes') || '[]');
+            if (!visited.includes(url)) {
+                visited.push(url);
+                localStorage.setItem('visited_notes', JSON.stringify(visited));
+            }
+            updateProgress();
+        }
+        
+        // 更新进度显示
+        function updateProgress() {
+            const visited = JSON.parse(localStorage.getItem('visited_notes') || '[]');
+            const total = document.querySelectorAll('.note-item').length;
+            const percentage = total > 0 ? Math.round((visited.length / total) * 100) : 0;
+            document.getElementById('progressCount').textContent = percentage + '%';
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            restoreThemeState();
+            updateProgress();
+            
+            // 点击笔记时记录进度
+            document.querySelectorAll('.note-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    recordProgress(this.href);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

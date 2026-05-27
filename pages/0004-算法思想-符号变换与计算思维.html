@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>符号变换与计算思维 | 算法学习之旅</title>
+    <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        /* 返回按钮 */
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* 标题样式 */
+        h1 {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+        }
+        
+        /* 章节样式 */
+        h2 {
+            font-size: 1.8em;
+            color: #34495e;
+            margin: 40px 0 20px;
+            padding-left: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        h3 {
+            font-size: 1.4em;
+            color: #2c3e50;
+            margin: 30px 0 15px;
+        }
+        
+        /* 段落样式 */
+        p {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #34495e;
+            margin-bottom: 15px;
+        }
+        
+        /* 引用样式 */
+        blockquote {
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            padding: 20px 25px;
+            margin: 25px 0;
+            border-radius: 0 12px 12px 0;
+            font-style: italic;
+            color: #555;
+        }
+        
+        blockquote p {
+            margin-bottom: 0;
+        }
+        
+        /* 列表样式 */
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 30px;
+        }
+        
+        li {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #34495e;
+            margin-bottom: 10px;
+        }
+        
+        /* 表格样式 */
+        .table-container {
+            overflow-x: auto;
+            margin: 25px 0;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ecf0f1;
+            color: #34495e;
+        }
+        
+        tr:hover td {
+            background: #f8f9ff;
+        }
+        
+        /* 代码块样式 */
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 25px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+        
+        code {
+            background: #f8f9ff;
+            color: #667eea;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+        }
+        
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+        }
+        
+        /* 重点标记 */
+        .highlight {
+            background: linear-gradient(120deg, #fff3e0 0%, #ffe0b2 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .key-point {
+            background: linear-gradient(120deg, #e8f5e9 0%, #c8e6c9 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        /* 互动答题样式 */
+        .interactive-answer {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 2px solid #dee2e6;
+        }
+        
+        .feedback {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .standard-answer {
+            margin: 15px 0;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .standard-answer.show {
+            display: block;
+        }
+        
+        .toggle-answer {
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 500;
+            margin: 10px 0;
+        }
+        
+        .toggle-answer:hover {
+            text-decoration: underline;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            max-width: 300px;
+            padding: 10px 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1em;
+            margin: 10px 0;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 10px 0;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* 小贴士样式 */
+        .tip-box {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border-left: 4px solid #ff9800;
+            padding: 20px 25px;
+            margin: 30px 0;
+            border-radius: 0 12px 12px 0;
+        }
+        
+        .tip-box h3 {
+            color: #e65100;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .tip-box p {
+            color: #5d4037;
+            margin-bottom: 10px;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+            
+            p, li {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-btn">← 返回笔记列表</a>
+        
+        <h1>符号变换与计算思维</h1>
+        <p class="subtitle">从艾达·洛芙莱斯的名言看算法的本质</p>
+        
+        <h2>一、艾达·洛芙莱斯的名言</h2>
+        
+        <blockquote>
+            <p>很多不熟悉数学研究的人往往以为，因为查尔斯·巴贝奇的分析机是用数值符号输出结果的，所以它的处理过程在本质上必然是算术的、数值的，而不是代数的、分析的.这是一种误解. 分析机能对数值量进行排列和组合，和处理字母或者其他通用符号完全一样，事实上，如果事先约定好，那么分析机也可以用代数符号显示结果.</p>
+        </blockquote>
+        
+        <p>这段话写于 1843 年，是艾达·洛芙莱斯在翻译一篇关于巴贝奇分析机的法语文章时，在文末附加的笔记（后人称之为 "Note A"）中写下的。</p>
+        
+        <h2>二、为什么这段话如此重要？</h2>
+        
+        <h3>1. 破除"算法 = 算术"的误解</h3>
+        
+        <p>很多人第一次接触"算法"这个词时，以为它只和数字、公式有关。但这段话告诉我们：<span class="highlight">算法的本质是"对符号的排列和组合"</span>，数值只是符号的一种形式。</p>
+        
+        <p>这意味着——</p>
+        
+        <ul>
+            <li>一首歌曲的歌词处理 ✓ 是算法</li>
+            <li>一张图片的滤镜变换 ✓ 是算法</li>
+            <li>一段文字的搜索引擎排序 ✓ 是算法</li>
+            <li>一盘棋的下法推演 ✓ 是算法</li>
+        </ul>
+        
+        <p><span class="key-point">算法可以处理任何可以用符号表示的东西。</span>这是计算机科学最基本的世界观之一。</p>
+        
+        <h3>2. 追溯"通用计算"的思想萌芽</h3>
+        
+        <p>巴贝奇的分析机（1837 年）比第一台电子计算机（1945 年）早了一百多年。洛芙莱斯在那个时代就认识到，这台机器<span class="highlight">不局限于某一类问题</span>——只要你能用符号表达，它就能处理。</p>
+        
+        <p>这其实就是<span class="key-point">通用计算（Universal Computation）</span>思想的雏形。后来图灵在 1936 年提出的图灵机，正是这个思想的数学 formalization。</p>
+        
+        <h3>3. 确立"通用性"的算法观</h3>
+        
+        <p>洛芙莱斯那句话的核心词是 <span class="highlight">"通用符号"（general symbols）</span>。算法的威力，取决于它的通用性。</p>
+        
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>算法</th>
+                    <th>处理对象</th>
+                    <th>通用性</th>
+                </tr>
+                <tr>
+                    <td>专门计算圆面积</td>
+                    <td>只有圆</td>
+                    <td>低</td>
+                </tr>
+                <tr>
+                    <td>排序算法</td>
+                    <td>任何可比较的东西</td>
+                    <td>中</td>
+                </tr>
+                <tr>
+                    <td>图灵机</td>
+                    <td>任何符号序列</td>
+                    <td>最高</td>
+                </tr>
+            </table>
+        </div>
+        
+        <h2>三、传统算法 vs 机器学习</h2>
+        
+        <h3>1. 核心区别</h3>
+        
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>维度</th>
+                    <th>传统算法</th>
+                    <th>机器学习算法</th>
+                </tr>
+                <tr>
+                    <td>规则来源</td>
+                    <td>程序员写好</td>
+                    <td>从数据中学习</td>
+                </tr>
+                <tr>
+                    <td>逻辑方向</td>
+                    <td>自上而下（理论→实践）</td>
+                    <td>自下而上（数据→理论）</td>
+                </tr>
+                <tr>
+                    <td>可解释性</td>
+                    <td>清晰，每一步都知道为什么</td>
+                    <td>有时是黑盒，不知道为什么</td>
+                </tr>
+                <tr>
+                    <td>确定性</td>
+                    <td>输入相同 → 输出一定相同</td>
+                    <td>输入相同 → 输出可能略有不同（概率性）</td>
+                </tr>
+                <tr>
+                    <td>适用场景</td>
+                    <td>规则明确的任务</td>
+                    <td>规则模糊、复杂模式识别</td>
+                </tr>
+            </table>
+        </div>
+        
+        <h3>2. 为什么感觉"大相径庭"？</h3>
+        
+        <p>因为它们代表了<span class="highlight">两种完全不同的思维方式</span>：</p>
+        
+        <h4>传统算法："我知道怎么做"</h4>
+        
+        <pre><code>if (耳朵是尖的 && 有胡须 && 会喵喵叫) {
+    return "这是猫";
+} else {
+    return "这不是猫";
+}</code></pre>
+        
+        <p>程序员明确告诉机器什么是猫，规则是人写的，机器只是执行。</p>
+        
+        <h4>机器学习："我不知道怎么做，但数据知道"</h4>
+        
+        <p>给机器一万张猫的照片，说："自己找规律"。机器自己发现猫的特征，然后自己总结出规则。</p>
+        
+        <h3>3. 但它们都是算法！</h3>
+        
+        <p>传统算法和机器学习都是算法，因为：</p>
+        
+        <ul>
+            <li><span class="key-point">都是对符号的排列和组合</span>
+                <ul>
+                    <li>传统算法：对数字、字符串等符号操作</li>
+                    <li>机器学习：对特征向量、矩阵等符号操作</li>
+                </ul>
+            </li>
+            <li>都有输入和输出</li>
+            <li>都可以用数学描述</li>
+        </ul>
+        
+        <p><span class="highlight">机器学习只是算法的一个新分支</span>，它继承了"符号变换"的本质，但改变了规则从哪里来。</p>
+        
+        <h2>四、符号化思维 vs 计算思维</h2>
+        
+        <h3>1. 核心区别</h3>
+        
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>维度</th>
+                    <th>符号化思维</th>
+                    <th>计算思维</th>
+                </tr>
+                <tr>
+                    <td>本质</td>
+                    <td>把现实抽象成符号</td>
+                    <td>用计算机方法解决问题</td>
+                </tr>
+                <tr>
+                    <td>核心操作</td>
+                    <td>符号化、符号变换</td>
+                    <td>分解、模式识别、抽象、算法设计</td>
+                </tr>
+                <tr>
+                    <td>抽象层次</td>
+                    <td>更抽象，更哲学</td>
+                    <td>更实践，更工程</td>
+                </tr>
+                <tr>
+                    <td>历史渊源</td>
+                    <td>数学、逻辑（2000+年）</td>
+                    <td>计算机科学（~80年）</td>
+                </tr>
+            </table>
+        </div>
+        
+        <h3>2. 它们的关系</h3>
+        
+        <p><span class="key-point">符号化思维是计算思维的基础</span>，计算思维是符号化思维的具体应用。</p>
+        
+        <ul>
+            <li>符号化思维：告诉你"问题是什么"</li>
+            <li>计算思维：告诉你"怎么用计算机解决它"</li>
+        </ul>
+        
+        <p><span class="highlight">符号化思维是根，计算思维是树。</span></p>
+        
+        <h2>五、数据建模：算法的第一步</h2>
+        
+        <h3>1. 统一流程</h3>
+        
+        <p>无论是传统算法还是机器学习，<span class="highlight">第一步永远是数据建模</span>，然后才是数据处理。</p>
+        
+        <pre><code>现实问题 → 数据建模（符号化） → 数据处理（算法设计） → 结果输出</code></pre>
+        
+        <h3>2. 为什么"数据建模"是第一步？</h3>
+        
+        <h4>不建模，就无法处理</h4>
+        
+        <p>想象你给计算机一张照片，直接说："这是猫吗？"</p>
+        
+        <p>计算机："？？？这是什么？我看不到，我只认识0和1。"</p>
+        
+        <p>你必须先建模：
+        <ul>
+            <li>把照片变成像素矩阵</li>
+            <li>把像素变成特征向量</li>
+            <li>计算机才能处理</li>
+        </ul>
+        </p>
+        
+        <h4>建模决定了你能做什么</h4>
+        
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>建模方式</th>
+                    <th>能解决的问题</th>
+                    <th>不能解决的问题</th>
+                </tr>
+                <tr>
+                    <td>把文本建模成字符串</td>
+                    <td>搜索、匹配</td>
+                    <td>语义理解</td>
+                </tr>
+                <tr>
+                    <td>把文本建模成向量</td>
+                    <td>语义相似度、分类</td>
+                    <td>精确匹配</td>
+                </tr>
+                <tr>
+                    <td>把图像建模成像素</td>
+                    <td>图像处理</td>
+                    <td>内容理解</td>
+                </tr>
+            </table>
+        </div>
+        
+        <p><span class="key-point">好的建模，是成功的一半。</span></p>
+        
+        <h3>3. 数据建模是符号化思维的体现</h3>
+        
+        <p>艾达·洛芙莱斯说：分析机能处理"通用符号"。</p>
+        
+        <p><span class="highlight">数据建模，就是把现实世界的通用符号化。</span></p>
+        
+        <h2>六、练习题</h2>
+        
+        <h3>题目 1：传统算法 vs 机器学习</h3>
+        
+        <p>以下哪些场景适合用传统算法，哪些适合用机器学习？</p>
+        
+        <div class="interactive-answer">
+            <p><strong>场景 A：</strong> 给一个数字列表，按从小到大排序</p>
+            <p><strong>场景 B：</strong> 判断一张图片中是否有猫</p>
+            <p><strong>场景 C：</strong> 在地图上找两点之间的最短路径</p>
+            <p><strong>场景 D：</strong> 识别语音中的文字</p>
+            
+            <p><strong>你的答案：</strong></p>
+            <p>传统算法：<input type="text" id="answer-choice1" placeholder="输入场景字母，如 A,C"></p>
+            <p>机器学习：<input type="text" id="answer-choice2" placeholder="输入场景字母，如 B,D"></p>
+            
+            <button onclick="checkChoice1()">提交答案</button>
+            <div id="feedback-choice1" class="feedback"></div>
+            
+            <span class="toggle-answer" id="toggle-btn1" onclick="toggleAnswer('choice1')">查看标准答案</span>
+            <div id="standard-answer-choice1" class="standard-answer">
+                <p><strong>标准答案：</strong></p>
+                <p>传统算法：A, C</p>
+                <p>机器学习：B, D</p>
+                
+                <p><strong>解析：</strong></p>
+                <ul>
+                    <li><strong>场景 A（排序）：</strong> 规则明确，有成熟的算法（快速排序、归并排序等），适合传统算法</li>
+                    <li><strong>场景 B（图像识别）：</strong> 规则模糊，很难用代码描述"什么是猫"，适合机器学习</li>
+                    <li><strong>场景 C（最短路径）：</strong> 规则明确，有 Dijkstra 算法等，适合传统算法</li>
+                    <li><strong>场景 D（语音识别）：</strong> 规则模糊，语音到文字的映射很复杂，适合机器学习</li>
+                </ul>
+            </div>
+        </div>
+        
+        <h3>题目 2：数据建模</h3>
+        
+        <p>以下问题应该如何进行数据建模？</p>
+        
+        <div class="interactive-answer">
+            <p><strong>问题 A：</strong> 推荐系统：给用户推荐他可能喜欢的电影</p>
+            <p><strong>问题 B：</strong> 社交网络：找出用户之间的朋友关系</p>
+            
+            <p><strong>你的答案：</strong></p>
+            <p>问题 A 的建模方式：<input type="text" id="answer-short1" placeholder="简要描述如何建模"></p>
+            <p>问题 B 的建模方式：<input type="text" id="answer-short2" placeholder="简要描述如何建模"></p>
+            
+            <button onclick="checkShortAnswer()">提交答案</button>
+            <div id="feedback-short" class="feedback"></div>
+            
+            <span class="toggle-answer" id="toggle-btn2" onclick="toggleAnswer('short')">查看标准答案</span>
+            <div id="standard-answer-short" class="standard-answer">
+                <p><strong>标准答案：</strong></p>
+                
+                <p><strong>问题 A（推荐系统）：</strong></p>
+                <ul>
+                    <li>用户 → 用户ID（符号）</li>
+                    <li>电影 → 电影ID（符号）</li>
+                    <li>用户行为（点击、评分）→ 行为向量（符号）</li>
+                    <li>用户-电影关系 → 矩阵（符号结构）</li>
+                </ul>
+                
+                <p><strong>问题 B（社交网络）：</strong></p>
+                <ul>
+                    <li>用户 → 节点（符号）</li>
+                    <li>朋友关系 → 边（符号）</li>
+                    <li>整个社交网络 → 图（符号结构）</li>
+                </ul>
+            </div>
+        </div>
+        
+        <h3>题目 3：简答题</h3>
+        
+        <div class="interactive-answer">
+            <p><strong>问题：</strong> 为什么说"符号化思维是计算思维的基础"？请用你自己的话解释。</p>
+            
+            <p><strong>你的答案：</strong></p>
+            <textarea id="answer-essay1" rows="5" placeholder="写下你的理解..." style="width: 100%; max-width: 100%; padding: 10px 15px; border: 2px solid #dee2e6; border-radius: 8px; font-size: 1em; margin: 10px 0; font-family: inherit;"></textarea>
+            
+            <button onclick="checkEssayAnswer()">提交答案</button>
+            <div id="feedback-essay" class="feedback"></div>
+            
+            <span class="toggle-answer" id="toggle-btn3" onclick="toggleAnswer('essay')">查看参考答案</span>
+            <div id="standard-answer-essay" class="standard-answer">
+                <p><strong>参考答案：</strong></p>
+                <p>符号化思维是计算思维的基础，因为：</p>
+                <ol>
+                    <li><strong>不符号化，就无法抽象问题：</strong> 计算机只能处理符号，如果不把现实问题符号化，计算机就无法理解问题。</li>
+                    <li><strong>不符号化，就无法设计算法：</strong> 算法是对符号的操作，如果问题没有符号化，就无从设计算法。</li>
+                    <li><strong>符号化决定了算法的通用性：</strong> 好的符号化能让算法处理一类问题，而不是一个特定问题。</li>
+                </ol>
+                <p>简单说：符号化思维告诉我们"问题是什么"，计算思维告诉我们"怎么解决它"。没有"是什么"，就谈不上"怎么解决"。</p>
+            </div>
+        </div>
+        
+        <div class="tip-box">
+            <h3>💡 小贴士：艾达·洛芙莱斯</h3>
+            <p>艾达·洛芙莱斯（Ada Lovelace, 1815-1852）是英国诗人拜伦勋爵的女儿，也是历史上第一位程序员。她在 1843 年为巴贝奇的分析机编写了第一个算法，用于计算伯努利数。</p>
+            <p>更重要的是，她预见到了计算机的潜力远不止于数值计算。她写道："分析机可以编排和组合代数量，就像它们编排和组合数字和其他符号一样。"</p>
+            <p>这段话被认为是"通用计算"思想的早期萌芽，比现代计算机早了一百多年。为了纪念她，美国国防部在 1980 年开发的一种编程语言被命名为 "Ada"。</p>
+        </div>
+        
+        <div class="tip-box">
+            <h3>📚 延伸阅读</h3>
+            <p>如果你想深入了解算法思想，推荐阅读：</p>
+            <ul>
+                <li>《算法导论》- Thomas H. Cormen 等</li>
+                <li>《算法之美》- Brian Christian & Tom Griffiths</li>
+                <li>《计算机程序的构造和解释》（SICP）- Harold Abelson 等</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // 检查选择题答案
+        function checkChoice1() {
+            const answer1 = document.getElementById('answer-choice1').value.toUpperCase().replace(/\s/g, '');
+            const answer2 = document.getElementById('answer-choice2').value.toUpperCase().replace(/\s/g, '');
+            const feedback = document.getElementById('feedback-choice1');
+            
+            // 标准答案：传统算法 A,C；机器学习 B,D
+            const correct1 = ['AC', 'CA'];
+            const correct2 = ['BD', 'DB'];
+            
+            const isCorrect1 = correct1.includes(answer1);
+            const isCorrect2 = correct2.includes(answer2);
+            
+            if (isCorrect1 && isCorrect2) {
+                feedback.className = 'feedback correct';
+                feedback.textContent = '✅ 回答正确！你很好地理解了传统算法和机器学习的适用场景。';
+            } else {
+                feedback.className = 'feedback incorrect';
+                let hint = '❌ 回答有误。';
+                if (!isCorrect1) {
+                    hint += ' 传统算法应该是 A,C（排序和最短路径）。';
+                }
+                if (!isCorrect2) {
+                    hint += ' 机器学习应该是 B,D（图像识别和语音识别）。';
+                }
+                feedback.textContent = hint;
+            }
+        }
+        
+        // 检查简答题（关键词匹配）
+        function checkShortAnswer() {
+            const answer1 = document.getElementById('answer-short1').value.toLowerCase();
+            const answer2 = document.getElementById('answer-short2').value.toLowerCase();
+            const feedback = document.getElementById('feedback-short');
+            
+            // 问题 A 的关键词
+            const keywords1 = ['用户', '电影', '矩阵', '向量', 'id', '行为'];
+            // 问题 B 的关键词
+            const keywords2 = ['用户', '节点', '朋友', '边', '图', '关系'];
+            
+            const found1 = keywords1.some(keyword => answer1.includes(keyword));
+            const found2 = keywords2.some(keyword => answer2.includes(keyword));
+            
+            if (found1 && found2) {
+                feedback.className = 'feedback correct';
+                feedback.textContent = '✅ 回答正确！你的建模思路很清晰。';
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = '❌ 回答不够准确。提示：问题 A 涉及用户、电影、矩阵；问题 B 涉及节点、边、图。';
+            }
+        }
+        
+        // 检查论述题（关键词匹配）
+        function checkEssayAnswer() {
+            const answer = document.getElementById('answer-essay1').value.toLowerCase();
+            const feedback = document.getElementById('feedback-essay');
+            
+            // 关键词
+            const keywords = ['符号', '抽象', '基础', '计算', '算法', '问题'];
+            
+            const foundCount = keywords.filter(keyword => answer.includes(keyword)).length;
+            
+            if (foundCount >= 4) {
+                feedback.className = 'feedback correct';
+                feedback.textContent = '✅ 回答很好！你对符号化思维和计算思维的关系理解得很透彻。';
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = '❌ 回答不够深入。提示：思考"符号化"和"抽象"的关系，以及"问题是什么"和"怎么解决"的关系。';
+            }
+        }
+        
+        // 显示/隐藏标准答案
+        function toggleAnswer(answerId) {
+            const answer = document.getElementById('standard-answer-' + answerId);
+            const toggleBtn = document.getElementById('toggle-btn' + answerId);
+            
+            if (answer.classList.contains('show')) {
+                answer.classList.remove('show');
+                toggleBtn.textContent = '查看标准答案';
+            } else {
+                answer.classList.add('show');
+                toggleBtn.textContent = '隐藏标准答案';
+            }
+        }
+    </script>
+</body>
+</html>
